@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script async src='/cdn-cgi/bm/cv/669835187/api.js'></script></head>
+    <body>
+        <table id="booksTable" class="table">
+            <thead>
+                <tr>
+                    <th>Titulo</th>
+                    <th>Id_Autor</th>
+                    <th>Id_Genero</th>
+                </tr>
+            </thead>
+        </table>
+        <tbody>
+        </tbody>
+        <input type="button" value="Cargar libros" id="loadBooks"/>
+        <div style="display: none;" id="messages">
+            <p></p>
+        </div>
+        <div style="display: none;" id="bookForm">
+            <hr/>
+            <table>
+                <tr>
+                    <td>Titulo:</td>
+                    <td><input type="text" name="bookTitle" id="bookTitle"></td>
+                </tr>
+                <tr>
+                    <td>ID Autor:</td>
+                    <td><input type="number" name="bookAuthorId" id="bookAuthorId" min="1"></td>
+                </tr>
+                <tr>
+                    <td>ID Genero:</td>
+                    <td><input type="number" name="bookGenreId" id="bookGenreId" min="1"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type="button" value="Guardar" id="bookSave"/></td>
+                </tr>
+            </table>
+        </div>
+    <script type="text/javascript">(function(){window['__CF$cv$params']={r:'62e5da61a888d825',m:'db2161368cd29efa32a25fbd72bf0bfb0d6779a4-1615476931-1800-AZ7PGi58XYJrVyQ8rX5uWxYpwif0pYMjv2N/Myz3N6T+54nm+EZvTeuWTQVDSwP+4IF8tavxtETt9MVRLC3LGL3g99JljPIhb1/JTpOlpB44+wpuS05LFwZQ3kTw8uY6HAXHfefMjyhnVhoWCpE1BYxWPBY86rB1VbQgw1DTUXuRAiADKcXUp/tTcBmjPw0tS/nTGlYK9wyju11xDWBcCyU=',s:[0xaed29fef68,0x637f2329e4],}})();</script></body>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+    $('#loadBooks').click( function( ) {
+        $('#messages').first('p').text('Cargando libros...');
+        $('#messages').show();
+        $.ajax( {
+            'url': '../server/books',
+            'success' : function( data ) {
+                $('#messages').hide();
+                $('#booksTable > tbody').empty();
+                for ( b in data ) {
+                    addBook( data[b] );
+                }
+                $('#bookForm').show();
+            }
+        } );
+    });
+
+    function addBook( book )
+    {
+        $('#booksTable tr:last').after('<tr><td>' + book.titulo + '</td><td>' + book.id_autor + '</td><td>' + book.id_genero + '</td></tr>');
+    }
+
+    $('#bookSave').click( function( ) {
+        var newBook = {
+            titulo: $('#bookTitle').val(),
+            id_autor: $('#bookAuthorId').val(),
+            id_genero: $('#bookGenreId').val(),
+        }
+
+        $('#messages').first('p').text('Guardando libro...');
+        $('#messages').show();
+        $.ajax( {
+            'url': '../server/books',
+            'method': 'POST',
+            'data': JSON.stringify( newBook ),
+            'success' : function( data ) {
+                $('#messages').hide();
+                addBook( newBook );
+            }
+        } );
+    });
+    </script>
+</html>
